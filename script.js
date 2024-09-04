@@ -1,23 +1,63 @@
 const raw = require('raw-socket');
-const dns = require('dns')
+const dns = require('dns');
+const dgram = require('dgram');
 
 const MAX_TTL = 30;
 const TIMEOUT = 2000;
+const LOCAL_PORT = 8080;
+const DESTINATION_PORT = 33434; //traceroute-reserved port number range: 33434 - 33534
 
-function calculateChecksum(buffer) {
-    let sum = 0;
-    //Summing 16-bit words
-    for (let i=0; i < buffer.length; i+=2) {
-        const word = (buffer[i] << 8) + (buffer[i + 1] || 0);
-        sum += word;
-    }
-    //Carry bits
-    sum = (sum >> 16) + (sum & 0xffff);
-    sum += (sum >> 16);
-    //Inversion
-    const checksum = ~sum & 0xffff;
-    return checksum;
+const packet = Buffer.from([
+    0x08, 0x00, //ICMP Echo header
+    0x00, 0x00, //checksum
+    0x00, 0x01, //identifier
+    0x00, 0x01, //sequence number
+]);
+//overwriting checksum
+raw.writeChecksum(packet, 2, raw.createChecksum(packet));
+
+
+function traceroute(destinationAddress) {
+
+    const udpClient = dgram.createSocket('udp4');
+    const icmpSocket = raw.createSocket({protocol: raw.Protocol.ICMP});
+    let ttl = 4;
+
+    udpClient.bind(LOCAL_PORT, () => {
+        udpClient.setTTL(ttl);
+    });
+    
+    udpClient.send(packet, DESTINATION_PORT, destinationAddress, (err) => {
+        if (err) {
+            console.error("error during packet send: ", err);
+        }
+        console.log("Packet sent");
+    });
+
+    udpClient.on("close", () => {
+        console.log("UDP socket closed");
+    });
+
+    icmpSocket.on("close", () => {
+        console.log("ICMP socket closed");
+    });
+
+    icmpSocket.on("message", (buffer, source) => {
+        console.log(source);
+        icmpSocket.close();
+        udpClient.close();
+    });
 }
+
+
+
+
+
+
+
+
+
+/*
 
 function traceroute(destinationAddress) {
     dns.lookup(destinationAddress, (err, address) => {
@@ -26,6 +66,7 @@ function traceroute(destinationAddress) {
             return;
         }
         let ttl = 1;
+        console.log(address);
 
         function probeNextHop() {
             const socket = raw.createSocket({ protocol: raw.Protocol.ICMP });
@@ -34,11 +75,9 @@ function traceroute(destinationAddress) {
                 0x00, 0x00, //checksum
                 0x00, 0x01, //identifier
                 0x00, 0x01, //sequence number
-                0x00, 0x01, 0x03, 0x04, 0x06, 0x07, 0x09, 0x10, //random data
             ]);
             //overwriting checksum
-            const checksum = calculateChecksum(packet);
-            packet.writeUInt16BE(checksum, 2);
+            raw.writeChecksum(packet, 2, raw.createChecksum(packet));
             
             socket.setOption(raw.SocketLevel.IPPROTO_IP, raw.SocketOption.IP_TTL, ttl);
             socket.on('message', (buffer, source) => {
@@ -47,6 +86,7 @@ function traceroute(destinationAddress) {
 
                 if (source == address || ttl > MAX_TTL) {
                     console.log("Traceroute complete");
+                    return;
                 } else {
                     ttl++;
                     probeNextHop();
@@ -79,11 +119,12 @@ function traceroute(destinationAddress) {
                         console.log("Traceroute complete");
                     }
                 }, TIMEOUT);
+                
             });
         }
         probeNextHop();
 
     });
 }
-
+*/
 traceroute('google.com');
