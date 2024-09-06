@@ -1,0 +1,56 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    width: 250px;
+    border: 1px solid
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.2em;
+    text-decoration: underline;
+}
+
+sub::before {
+    content:"-";
+    margin-right: 0.2em;
+}
+
+sub {
+    display: flex;
+    justify-content: center;
+    font-size: 0.9em;
+}
+
+button {
+    display: block;
+    margin: 1em auto;
+    padding: 0.4em;
+    -webkit-animation: color-background 2s infinite;
+    background-color: white;
+    border: 1px solid;
+    box-shadow: 5px 5px 3px;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+@keyframes color-background {
+    0% {color:magenta;}
+    20% {color:blue;}
+    40% {color: green}
+    60%{color:yellowgreen;}
+    80% {color: orange;}
+    100% {color: magenta;}
+}
