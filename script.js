@@ -46,10 +46,11 @@ function traceroute(destinationAddress) {
         }
 
         function handleReply(ip) {
-            if (!timeout) {
+            if (!ip) {
                 console.log(`Elapsed time of ${TIMEOUT}ms on hop ${ttl}`);
-                if (tll < MAX_TTL) {
-                    sendPacket();
+                if (ttl < MAX_TTL) {
+                    setImmediate(sendPacket);
+                    return;
                 }
                 console.log(`Max hops of ${MAX_TTL} reached.`);
                 icmpSocket.close();
@@ -88,4 +89,4 @@ function traceroute(destinationAddress) {
 
 
 
-traceroute('google.com');
+traceroute('cuni.cz');
