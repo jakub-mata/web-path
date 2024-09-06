@@ -32,7 +32,7 @@ sub {
     font-size: 0.9em;
 }
 
-button {
+#explore-button {
     display: block;
     margin: 1em auto;
     padding: 0.4em;
@@ -42,7 +42,7 @@ button {
     box-shadow: 5px 5px 3px;
 }
 
-button:hover {
+#explore-button:hover {
     cursor: pointer;
 }
 
@@ -53,4 +53,15 @@ button:hover {
     60%{color:yellowgreen;}
     80% {color: orange;}
     100% {color: magenta;}
+}
+
+/*TABLE*/
+#table-header {
+    visibility: hidden;
+}
+th {
+    margin: 0 auto;
+}
+tr {
+    text-align: left;
 }
