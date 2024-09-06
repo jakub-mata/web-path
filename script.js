@@ -1,9 +1,9 @@
 const raw = require('raw-socket');
 const dns = require('dns');
 const dgram = require('dgram');
-const { hostname } = require('os');
 
-const MAX_TTL = 30;
+const MAX_TTL = 20;
+const TIMEOUT = 2000;
 const LOCAL_PORT = 8080;
 const DESTINATION_PORT = 33434; //traceroute-reserved port number range: 33434 - 33534
 
@@ -21,23 +21,51 @@ function traceroute(destinationAddress) {
 
     const udpClient = dgram.createSocket('udp4');
     const icmpSocket = raw.createSocket({protocol: raw.Protocol.ICMP});
-    let ttl = 8;
+    const options = {
+        family: 4,
+    }
+    let ttl = 0;
+    let timeout;
 
-    dns.lookup(destinationAddress, (err, ipAddress) => {
+    dns.lookup(destinationAddress, options, (err, ipAddress) => {
         if (err) {
             console.error("error during dns lookup: ", err);
             return;
         }
 
         function sendPacket() {
+            ttl++;
             udpClient.setTTL(ttl);
 
             udpClient.send(packet, DESTINATION_PORT, destinationAddress, (err) => {
                 if (err) {
                     console.error("error during packet send: ", err);
                 }
-                console.log("Packet sent");
+                timeout = setTimeout(handleReply, TIMEOUT);
             });
+        }
+
+        function handleReply(ip) {
+            if (!timeout) {
+                console.log(`Elapsed time of ${TIMEOUT}ms on hop ${ttl}`);
+                if (tll < MAX_TTL) {
+                    sendPacket();
+                }
+                console.log(`Max hops of ${MAX_TTL} reached.`);
+                icmpSocket.close();
+                udpClient.close();
+                return;
+            }
+    
+            clearTimeout(timeout);
+            console.log(`Hop ${ttl}: ${ip}`);
+            if (ip === ipAddress) {
+                console.log("Destination reached.");
+                icmpSocket.close();
+                udpClient.close();
+                return;
+            }
+            setImmediate(sendPacket);
         }
 
         udpClient.bind(LOCAL_PORT, () => {
@@ -53,19 +81,11 @@ function traceroute(destinationAddress) {
         });
     
         icmpSocket.on("message", (buffer, source) => {
-            console.log(`Hop ${ttl}: ${source}`);
-            if (source === ipAddress || ttl > MAX_TTL) {
-                icmpSocket.close();
-                udpClient.close();
-                return;
-            } else {
-                ttl++;
-                sendPacket();
-            }
+            handleReply(source);
         });
     })
-
-  
 }
+
+
 
 traceroute('google.com');
