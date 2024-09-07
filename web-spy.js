@@ -1,6 +1,7 @@
 const raw = require('raw-socket');
 const dns = require('dns');
 const dgram = require('dgram');
+const { program } = require("commander");
 
 const MAX_TTL = 20;
 const TIMEOUT = 2000;
@@ -15,6 +16,18 @@ const packet = Buffer.from([
 ]);
 //overwriting checksum
 raw.writeChecksum(packet, 2, raw.createChecksum(packet));
+
+program
+    .argument("<address>", "web address to trace (either IP or a host name, e.g. google.com)")
+    .action((address) => {
+        if (address) {
+            console.log("Searching for", address);
+            traceroute(address);
+        } else {
+            console.log("You have not entered any host as a destination");
+        }
+    })
+program.parse();
 
 
 function traceroute(destinationAddress) {
@@ -86,5 +99,3 @@ function traceroute(destinationAddress) {
         });
     })
 }
-
-//traceroute('cuni.cz');
