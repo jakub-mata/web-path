@@ -2,6 +2,7 @@ const raw = require('raw-socket');
 const dns = require('dns');
 const dgram = require('dgram');
 const { program } = require("commander");
+const { start } = require('repl');
 
 const MAX_TTL = 20;
 const TIMEOUT = 2000;
@@ -40,12 +41,19 @@ function traceroute(destinationAddress) {
     let ttl = 0;
     let timeout;
 
-    dns.lookup(destinationAddress, options, (err, ipAddress) => {
-        if (err) {
-            console.error("error during dns lookup: ", err);
-            return;
-        }
+    if (!isIPAddress()) {
+        dns.lookup(destinationAddress, options, (err, ipAddress) => {
+            if (err) {
+                console.error("error during dns lookup: ", err);
+                return;
+            }
+            startTrace(ipAddress);
+        })
+    } else {
+        startTrace(destinationAddress);
+    }
 
+    function startTrace(ipAddress) {
         function sendPacket() {
             ttl++;
             udpClient.setTTL(ttl);
@@ -97,5 +105,9 @@ function traceroute(destinationAddress) {
         icmpSocket.on("message", (buffer, source) => {
             handleReply(source);
         });
-    })
+    }
+}
+
+function isIPAddress(ip) {
+    return false;
 }
