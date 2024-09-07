@@ -87,6 +87,4 @@ function traceroute(destinationAddress) {
     })
 }
 
-
-
-traceroute('cuni.cz');
+//traceroute('cuni.cz');
