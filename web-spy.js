@@ -2,7 +2,6 @@ const raw = require('raw-socket');
 const dns = require('dns');
 const dgram = require('dgram');
 const { program } = require("commander");
-const { start } = require('repl');
 
 const MAX_TTL = 20;
 const TIMEOUT = 2000;
@@ -109,5 +108,6 @@ function traceroute(destinationAddress) {
 }
 
 function isIPAddress(ip) {
-    return false;
+    const IPv4_regex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/gm;
+    return IPv4_regex.test(ip);
 }
