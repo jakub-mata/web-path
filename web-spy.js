@@ -81,7 +81,7 @@ function traceroute(destinationAddress) {
             clearTimeout(timeout);
             console.log(`Hop ${ttl}: ${ip}`);
             if (ip === ipAddress) {
-                console.log("Destination reached.");
+                console.log(`Destination ${destinationAddress}reached at ${ipAddress}.`);
                 icmpSocket.close();
                 udpClient.close();
                 return;
