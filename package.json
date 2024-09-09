@@ -1,0 +1,14 @@
+{
+    "name": "web-spy",
+    "version": "1.0.0",
+    "description": "A Node.js traceroute",
+    "main": "web-spy.js",
+    "scripts": {
+      "start": "sudo node web-spy.js"
+    },
+    "dependencies": {
+        "raw-socket": "^1.8.1",
+        "commander": "^12.1.0"
+    }
+  }
+  
