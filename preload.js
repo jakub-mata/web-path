@@ -9,6 +9,4 @@ window.addEventListener('DOMContentLoaded', () => {
       replaceText(`${dependency}-version`, process.versions[dependency])
     }
     */
-    const button = document.getElementById("send-button");
-    button.setAttribute("onclick", "startHopping()")
 })
