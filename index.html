@@ -4,12 +4,26 @@
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="styles.css">
     <title>Hello World!</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+    <header>
+      <h1>Web Spy</h1>
+      <sub>search for your footprint on the internet!</sub>
+    </header>
+    <div id="input-area">
+      <textarea placeholder="Enter a website here: "></textarea>
+      <button id="send-button">Send</button>
+    </div>
+    
+    <table id="route-table">
+      <tr>
+        <th>#Hop</th>
+        <th>IP</th>
+        <th>Canonical name</th>
+      </tr>
+    </table>
+    <script src="renderer.js"></script>
   </body>
 </html>
