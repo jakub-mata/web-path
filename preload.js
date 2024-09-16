@@ -1,3 +1,12 @@
+const { contextBridge, ipcRenderer } = require("electron");
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  sendMessage: (msg) => {
+    ipcRenderer.send("msg", msg);
+  }
+})
+
+
 window.addEventListener('DOMContentLoaded', () => {
     /*
     const replaceText = (selector, text) => {
