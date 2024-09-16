@@ -3,8 +3,13 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld('electronAPI', {
   sendMessage: (msg) => {
     ipcRenderer.send("msg", msg);
-  }
+  },
+  receiveResponse: (callback) => {
+    ipcRenderer.on("respond", (event, value) => callback(value));
+  },
 })
+
+
 
 
 window.addEventListener('DOMContentLoaded', () => {

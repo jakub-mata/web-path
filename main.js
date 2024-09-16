@@ -9,16 +9,17 @@ const createWindow = () => {
             preload: path.join(__dirname, "preload.js")
         }
     })
+
+    ipcMain.on("msg", (event, data) => {
+        console.warn(data);
+        win.webContents.send("respond", "hello back");
+    })
+
     win.loadFile("index.html");
 }
 
 app.whenReady().then(() => {
     createWindow();
-
-    ipcMain.on("msg", (event, data) => {
-        console.warn(data);
-    })
-    
 
     app.on("activate", () => {
         if (BrowserWindow.getAllWindows.length === 0) {

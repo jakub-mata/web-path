@@ -12,3 +12,7 @@ function startHopping() {
 function showStartMessage() {
     button.innerText = "Done";
 }
+
+window.electronAPI.receiveResponse((res) => {
+    alert(res);
+})
