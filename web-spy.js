@@ -2,6 +2,8 @@ const raw = require('raw-socket');
 const dns = require('dns');
 const dgram = require('dgram');
 const { program } = require("commander");
+const { log } = require('console');
+const { hostname } = require('os');
 
 const MAX_TTL = 20;
 const TIMEOUT = 2000;
@@ -19,10 +21,13 @@ raw.writeChecksum(packet, 2, raw.createChecksum(packet));
 
 program
     .argument("<address>", "web address to trace (either IP or a host name, e.g. google.com)")
-    .action((address) => {
+    .option("-n", "display hostnames alongside IPs on individual hops", false)
+    .action((address, options) => {
         if (address) {
             console.log("Searching for", address);
-            traceroute(address);
+            console.log(options.n)
+            console.log(options);
+            traceroute(address, options.n);
         } else {
             console.log("You have not entered any host as a destination");
         }
@@ -30,7 +35,7 @@ program
 program.parse();
 
 
-function traceroute(destinationAddress) {
+function traceroute(destinationAddress, logHostnamesBool) {
 
     const udpClient = dgram.createSocket('udp4');
     const icmpSocket = raw.createSocket({protocol: raw.Protocol.ICMP});
@@ -46,13 +51,13 @@ function traceroute(destinationAddress) {
                 console.error("error during dns lookup: ", err);
                 return;
             }
-            startTrace(ipAddress);
+            startTrace(ipAddress, logHostnamesBool);
         })
     } else {
-        startTrace(destinationAddress);
+        startTrace(destinationAddress, logHostnamesBool);
     }
 
-    function startTrace(ipAddress) {
+    function startTrace(ipAddress, logHostnamesBool) {
         function sendPacket() {
             ttl++;
             udpClient.setTTL(ttl);
@@ -65,7 +70,7 @@ function traceroute(destinationAddress) {
             });
         }
 
-        function handleReply(ip) {
+        function handleReply(ip, hostnameBool) {
             if (!ip) {
                 console.log(`Elapsed time of ${TIMEOUT}ms on hop ${ttl}`);
                 if (ttl < MAX_TTL) {
@@ -79,9 +84,10 @@ function traceroute(destinationAddress) {
             }
     
             clearTimeout(timeout);
-            console.log(`Hop ${ttl}: ${ip}`);
+            handleLogging(ip, hostnameBool, ttl);
+            
             if (ip === ipAddress) {
-                console.log(`Destination ${destinationAddress}reached at ${ipAddress}.`);
+                console.log(`Destination ${destinationAddress} reached at ${ipAddress}.`);
                 icmpSocket.close();
                 udpClient.close();
                 return;
@@ -102,7 +108,7 @@ function traceroute(destinationAddress) {
         });
     
         icmpSocket.on("message", (buffer, source) => {
-            handleReply(source);
+            handleReply(source, logHostnamesBool);
         });
     }
 }
@@ -110,4 +116,29 @@ function traceroute(destinationAddress) {
 function isIPAddress(ip) {
     const IPv4_regex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/gm;
     return IPv4_regex.test(ip);
+}
+
+async function findHostName(ip, ttl) {
+    return dns.reverse(ip, (err, hostnames) => {
+        if (err) {
+            return null;
+        }
+        logHop(hostnames[0], ip, ttl);
+    })
+}
+
+function logHop(hostname, ip, ttl) {
+    if (hostname) {
+        console.log(`Hop ${ttl}: ${ip} at ${hostname}`);
+    } else {
+        console.log(`Hop ${ttl}: ${ip}`);
+    }
+}
+
+function handleLogging(ip, hostnameBool, ttl) {
+    if (hostnameBool) {
+        findHostName(ip, ttl);
+    } else {
+        logHop(null, ip, ttl);
+    }
 }
