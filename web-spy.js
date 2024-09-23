@@ -2,11 +2,9 @@ const raw = require('raw-socket');
 const dns = require('dns');
 const dgram = require('dgram');
 const { program } = require("commander");
-const { log } = require('console');
-const { hostname } = require('os');
 
-const MAX_TTL = 20;
-const TIMEOUT = 2000;
+let MAX_TTL = 20;  //can be changed through optional arguments
+let TIMEOUT = 2000;  //can be changed through optional arguments
 const LOCAL_PORT = 8080;
 const DESTINATION_PORT = 33434; //traceroute-reserved port number range: 33434 - 33534
 
@@ -22,9 +20,13 @@ raw.writeChecksum(packet, 2, raw.createChecksum(packet));
 program
     .argument("<address>", "web address to trace (either IP or a host name, e.g. google.com)")
     .option("-n", "display hostnames alongside IPs on individual hops", false)
+    .option("--timeout <int>", "timeout after which our socket no longer waits for a response")
+    .option("--max_ttl <int>", "max amount of the time-to-live variable after which hopping ends (default is 20)")
     .action((address, options) => {
         if (address) {
             console.log("Searching for", address);
+            if (options.timeout) {TIMEOUT = options.timeout}
+            if (options.max_ttl) {MAX_TTL = options.max_ttl}
             traceroute(address, options.n);
         } else {
             console.log("You have not entered any host as a destination");
