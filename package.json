@@ -1,19 +1,18 @@
 {
-    "name": "web-spy",
-    "version": "1.0.0",
-    "author": {
-        "name": "Jakub Mata"
-    },
-    "description": "A Node.js traceroute",
-    "main": "main.js",
-    "scripts": {
-        "start": "electron ."
-    },
-    "dependencies": {
-        "commander": "^12.1.0",
-        "raw-socket": "^1.8.1"
-    },
-    "devDependencies": {
-        "electron": "^32.1.0"
-    }
+  "name": "web-path",
+  "version": "1.0.0",
+  "description": "Hello there",
+  "main": "web-spy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "traceroute"
+  ],
+  "dependencies": {
+    "commander": "^12.1.0",
+    "raw-socket": "^1.8.1"
+  },
+  "author": "Jakub Mata",
+  "license": "MIT"
 }

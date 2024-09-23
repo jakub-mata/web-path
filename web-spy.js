@@ -40,7 +40,7 @@ function traceroute(destinationAddress) {
     let ttl = 0;
     let timeout;
 
-    if (!isIPAddress()) {
+    if (!isIPAddress(destinationAddress)) {
         dns.lookup(destinationAddress, options, (err, ipAddress) => {
             if (err) {
                 console.error("error during dns lookup: ", err);
