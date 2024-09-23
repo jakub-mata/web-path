@@ -55,7 +55,7 @@ function traceroute(destinationAddress, logHostnamesBool) {
         startTrace(destinationAddress, logHostnamesBool);
     }
 
-    function startTrace(ipAddress, logHostnamesBool) {
+    async function startTrace(ipAddress, logHostnamesBool) {
         function sendPacket() {
             ttl++;
             udpClient.setTTL(ttl);
@@ -80,17 +80,30 @@ function traceroute(destinationAddress, logHostnamesBool) {
                 udpClient.close();
                 return;
             }
-    
-            clearTimeout(timeout);
-            handleLogging(ip, hostnameBool, ttl);
             
-            if (ip === ipAddress) {
-                console.log(`Destination ${destinationAddress} reached at ${ipAddress}.`);
-                icmpSocket.close();
-                udpClient.close();
-                return;
+            clearTimeout(timeout);
+            if (hostnameBool) {
+                findHostName(ip, ttl).then((value) => {
+                    logHop(value, ip, ttl);
+                    checkEnd();
+                }, (reason) => {
+                    logHop(reason, ip, ttl);
+                    checkEnd();
+                })
+            } else {
+                logHop(null, ip, ttl);
+                checkEnd();
             }
-            setImmediate(sendPacket);
+
+            function checkEnd() {
+                if (ip === ipAddress) {
+                    console.log(`Destination ${destinationAddress} reached at ${ipAddress}.`);
+                    icmpSocket.close();
+                    udpClient.close();
+                    return;
+                }
+                setImmediate(sendPacket);
+            }
         }
 
         udpClient.bind(LOCAL_PORT, () => {
@@ -116,12 +129,15 @@ function isIPAddress(ip) {
     return IPv4_regex.test(ip);
 }
 
-async function findHostName(ip, ttl) {
-    return dns.reverse(ip, (err, hostnames) => {
-        if (err) {
-            return null;
-        }
-        logHop(hostnames[0], ip, ttl);
+function findHostName(ip, ttl) {
+    return new Promise((resolve, reject) => {
+        dns.reverse(ip, (err, hostnames) => {
+            if (err) {
+                reject(null);
+                return;
+            }
+            resolve(hostnames[0]);
+        })
     })
 }
 
@@ -130,13 +146,5 @@ function logHop(hostname, ip, ttl) {
         console.log(`Hop ${ttl}: ${ip} at ${hostname}`);
     } else {
         console.log(`Hop ${ttl}: ${ip}`);
-    }
-}
-
-function handleLogging(ip, hostnameBool, ttl) {
-    if (hostnameBool) {
-        findHostName(ip, ttl);
-    } else {
-        logHop(null, ip, ttl);
     }
 }
