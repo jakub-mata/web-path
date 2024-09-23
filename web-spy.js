@@ -25,8 +25,6 @@ program
     .action((address, options) => {
         if (address) {
             console.log("Searching for", address);
-            console.log(options.n)
-            console.log(options);
             traceroute(address, options.n);
         } else {
             console.log("You have not entered any host as a destination");
@@ -72,12 +70,12 @@ function traceroute(destinationAddress, logHostnamesBool) {
 
         function handleReply(ip, hostnameBool) {
             if (!ip) {
-                console.log(`Elapsed time of ${TIMEOUT}ms on hop ${ttl}`);
+                console.log(`Hop ${ttl}: unresponsive (elapsed time of ${TIMEOUT}ms)`);
                 if (ttl < MAX_TTL) {
                     setImmediate(sendPacket);
                     return;
                 }
-                console.log(`Max hops of ${MAX_TTL} reached.`);
+                console.log(`HOPPING STOPPED: Max hops of ${MAX_TTL} reached.`);
                 icmpSocket.close();
                 udpClient.close();
                 return;
