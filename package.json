@@ -1,18 +1,26 @@
 {
   "name": "web-path",
   "version": "1.0.0",
-  "description": "Hello there",
+  "description": "A traceroute equivalent written for Node.",
   "main": "tracepath.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "traceroute"
+    "traceroute",
+    "routing",
+    "hopping",
+    "hops",
+    "ttl"
   ],
   "dependencies": {
     "commander": "^12.1.0",
     "raw-socket": "^1.8.1"
   },
   "author": "Jakub Mata",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jakub-mata/web-path"
+  }
 }
