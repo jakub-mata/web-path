@@ -44,7 +44,25 @@ There are 3 optional arguments:
 2. `--timeout <time in ms>`: integer optional argument for setting the timeout after which the socket no longer waits for a response from a certain hopping router. Default is 2000ms.
 3. `--max_ttl <int>`: integer optional argument for setting the maximum time-to-live attribute, essentially limiting the amount of hops, after which sockets are closed.
 
+Example output:
+```
+sudo node tracepath.js npmjs.org -n --timeout 3000
 
+Searching for npmjs.org
+Hop 1: 192.168.1.1 at _gateway
+Hop 2: 10.252.252.102
+Hop 3: unresponsive (elapsed time of 3000ms)
+Hop 4: 213.192.4.197 at ge2-24-s244.bb1.pop9.ost.sloane.cz
+Hop 5: 185.188.186.96 at ostra-rc-01-ae69.net.vodafone.cz
+Hop 6: 185.188.187.253 at a0sit-rc-01-ae1.net.vodafone.cz
+Hop 7: unresponsive (elapsed time of 3000ms)
+Hop 8: 31.30.191.82 at cst2-191-82.cust.vodafone.cz
+Hop 9: 104.16.0.35
+Hop 10: 104.16.3.35
+Destination npmjs.org reached at 104.16.3.35.
+ICMP socket closed
+UDP socket closed
+```
 
 ## Dependencies
 - [raw-socket](https://www.npmjs.com/package/raw-socket)
