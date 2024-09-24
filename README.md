@@ -11,22 +11,23 @@ When you search for a website, your request takes a certain path around the inte
 > An ICMP socket is created to catch incoming responses about reaching its destination. If you're interested in the details, you can visit this [website](https://www.howtogeek.com/134132/how-to-use-traceroute-to-identify-network-problems/).
 
  A server can be perfectly functioning but it doesn't have to send an ICMP response about a finished request. If a server on the route is unresponsive, a timeout runs out and another packet with increased time-to-live is sent.
+ > It can happen that the server of the destination itself is unresponsive. In this case, the socket will keep attempting to send requests with increasing TTL until maxTTL is reached. If you realize this, you can finish this process (e.g. CTRL + C on Linux machines).
 
 An example output (which would be different based on your network or just the current situation) after running it on `google.com` might look like this:
 ```
 Searching for google.com
 Hop 1: 192.168.1.1
 Hop 2: 10.252.252.102
-Elapsed time of 2000ms on hop 3
+Hop 3: unresponsive (elapsed time of 2000ms)
 Hop 4: 213.192.4.197
 Hop 5: 185.188.186.96
 Hop 6: 185.188.187.253
-Hop 7: 142.250.164.177
+Hop 7: unresponsive (elapsed time of 2000ms)
 Hop 8: 142.250.164.176
 Hop 9: 192.178.98.175
 Hop 10: 209.85.245.247
 Hop 11: 142.251.36.78
-Destination reached.
+Destination google.com reached at 142.251.36.78.
 ICMP socket closed
 UDP socket closed
 ```
