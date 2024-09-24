@@ -2,6 +2,10 @@
 
 This Javascript code mimics the famous traceroute command on Linux machines.
 
+## Installation
+
+Clone this repository and navigate to it in your terminal. The program requires NodeJS ()
+
 ## Description
 
 When you search for a website, your request takes a certain path around the internet. After running the script on a certain destination, this path will be logged out to the terminal. Individual hops are servers (or routers) which caught your request and sent it forward.
@@ -66,4 +70,6 @@ UDP socket closed
 ```
 
 ## Dependencies
+- [NodeJS](https://nodejs.org/en)
 - [raw-socket](https://www.npmjs.com/package/raw-socket)
+- [Commander](https://www.npmjs.com/package/commander)

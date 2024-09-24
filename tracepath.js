@@ -27,7 +27,7 @@ program
             console.log("Searching for", address);
             if (options.timeout) {TIMEOUT = options.timeout}
             if (options.max_ttl) {MAX_TTL = options.max_ttl}
-            traceroute(address, options.n);
+            tracepath(address, options.n);
         } else {
             console.log("You have not entered any host as a destination");
         }
@@ -35,7 +35,7 @@ program
 program.parse();
 
 
-function traceroute(destinationAddress, logHostnamesBool) {
+function tracepath(destinationAddress, logHostnamesBool) {
 
     const udpClient = dgram.createSocket('udp4');
     const icmpSocket = raw.createSocket({protocol: raw.Protocol.ICMP});
@@ -85,7 +85,7 @@ function traceroute(destinationAddress, logHostnamesBool) {
             
             clearTimeout(timeout);
             if (hostnameBool) {
-                findHostName(ip, ttl).then((value) => {
+                findHostName(ip).then((value) => {
                     logHop(value, ip, ttl);
                     checkEnd();
                 }, (reason) => {
@@ -131,7 +131,7 @@ function isIPAddress(ip) {
     return IPv4_regex.test(ip);
 }
 
-function findHostName(ip, ttl) {
+function findHostName(ip) {
     return new Promise((resolve, reject) => {
         dns.reverse(ip, (err, hostnames) => {
             if (err) {
