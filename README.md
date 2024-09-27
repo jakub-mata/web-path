@@ -1,10 +1,19 @@
-# Web-Spy
+# Web-Path
 
 This Javascript code mimics the famous traceroute command on Linux machines.
 
 ## Installation
 
-Clone this repository and navigate to it in your terminal. The program requires NodeJS ()
+Clone this repository and navigate to it in your terminal. The program requires NodeJS (ideally Node 20 or higher). You can check if you have node installed with
+```
+node -v
+```
+If you don't get the version of your Node, follow this [article](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs). After cloning the repo, open the main directory. To install dependencies, run 
+```
+npm i 
+```
+inside the directory. After that you should be good to go. See [Usage](#usage).
+Inside, there is JS file called tracepath.js containing the code. 
 
 ## Description
 
@@ -38,11 +47,11 @@ UDP socket closed
 
 ## Usage
 
-The `web-spy` command needs an elevated permission to run (specifically to create a socket). On linux, the main command would be:
+The `tracepath` command needs an elevated permission to run (specifically to create a socket). On linux, the main command would be:
 ```
 sudo node web-path *website to search for*
  ```
-The main positional argument (labeled as website to search for) can either be a host name (e.g. google.com) or an IPv4 address. If unsure, run `node web-path --help`.
+The main positional argument (labeled as website to search for) can either be a host name (e.g. google.com) or an IPv4 address. If unsure, run `node tracepath.js --help`.
 
 There are 3 optional arguments:
 1. `--n`: this flag reverse searches for hostnames of individual hops
@@ -70,6 +79,5 @@ UDP socket closed
 ```
 
 ## Dependencies
-- [NodeJS](https://nodejs.org/en)
 - [raw-socket](https://www.npmjs.com/package/raw-socket)
 - [Commander](https://www.npmjs.com/package/commander)
