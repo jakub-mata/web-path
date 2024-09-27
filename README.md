@@ -1,6 +1,6 @@
 # Web-Path
 
-This Javascript code mimics the famous traceroute command on Linux machines.
+This Javascript code mimics the popular traceroute command.
 
 ## Installation
 
